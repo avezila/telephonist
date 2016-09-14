@@ -1,11 +1,11 @@
 import React, {Component} from 'react'
 
 export default
-class TasksTableContainer extends Component {
+class Error404 extends Component {
   render () {
     return (
       <div>
-        TasksTable
+        Error404
       </div>
     )
   }

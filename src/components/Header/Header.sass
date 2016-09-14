@@ -1,0 +1,35 @@
+
+.root
+  display: flex
+  width: 100%
+  height: $header-height*1px
+  line-height: $header-height*1px
+  +shadow-2dp
+  background: #5682A3
+  color: white
+  font-size: 20px
+  font-weight: 500
+
+
+
+.item
+  text-align : center
+  float : left
+  padding: 0 15px
+  font-size : 0.8em
+  &,&:hover,&:visited,&:focus
+    color : #FFF
+    text-decoration : none
+
+.logo
+  @extend .item
+  font-size : 0.9em
+  padding: 0 30px
+
+.link
+  @extend .item
+  &:hover
+    background : #5e8bad
+  &.active
+    background : #3e6b8d
+    

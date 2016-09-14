@@ -1,11 +1,11 @@
 import React, {Component} from 'react'
 
 export default
-class FilterTasksContainer extends Component {
+class Tasks extends Component {
   render () {
     return (
       <div>
-        Filter tasks
+        Tasks
       </div>
     )
   }

@@ -1,11 +1,11 @@
 import React, {Component} from 'react'
 
 export default
-class Header extends Component {
+class AllTasks extends Component {
   render () {
     return (
       <div>
-        Header
+        AllTasks
       </div>
     )
   }

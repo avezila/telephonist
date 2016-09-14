@@ -303,7 +303,7 @@ webpackConfig.postcss = [
     autoprefixer: {
       add      : true,
       remove   : true,
-      browsers : ['last 2 versions', 'ie 8', 'ie 9']
+      browsers : ['> 0%']
     },
     discardComments: {
       removeAll: true
@@ -341,7 +341,7 @@ if (!__DEV__) {
     loader.loaders && loader.loaders.find((name) => /css/.test(name.split('?')[0]))
   ).forEach((loader) => {
     const [first, ...rest] = loader.loaders
-    loader.loader = ExtractTextPlugin.extract({loader: [first, ...rest]})
+    loader.loader = ExtractTextPlugin.extract({fallbackLoader: first, loader: rest})
     Reflect.deleteProperty(loader, 'loaders')
   })
 

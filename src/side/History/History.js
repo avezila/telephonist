@@ -20,9 +20,9 @@ class History {
   }
 
   onHistoryChange = (location, action) => {
-    console.log(location, action)
     this.SetLocation(location)
   }
+
   @action SetLocation (location) {
     if (this.location === undefined) {
       let o = {}
