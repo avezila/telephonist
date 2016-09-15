@@ -303,7 +303,7 @@ webpackConfig.postcss = [
     autoprefixer: {
       add      : true,
       remove   : true,
-      browsers : ['> 0%']
+      browsers : ['> 5%']
     },
     discardComments: {
       removeAll: true

@@ -1,0 +1,164 @@
+
+.root
+  min-height: 150px
+  margin: $gutter * 1px
+  margin-top: 0
+  padding: $gutter * 1px 0
+  background: white
+  +shadow-2dp
+  flex: 1
+
+.content
+  height: 100%
+  overflow-y: auto
+  padding: 0 12px
+
+
+$index-width: 25px
+$address-width: 150px
+$space-width: 120px
+$price-width: 125px
+$type-width: 150px
+$date-width: 130px
+$action-width: 150px
+
+$margin-width: 30px
+$padding: 10px
+
+.row
+  display: flex
+  flex-direction: row
+  flex-wrap: no-wrap
+  width: 100%
+  padding: 5px $margin-width/2
+  line-height: 20px
+
+    
+.row.body:hover
+  background: #e4ebf1
+  cursor: pointer
+
+
+.row.body
+  border-top: 1px solid #e4ebf1  
+
+
+
+.wrapper
+  display: flex
+  flex-direction: row
+
+.column
+  flex-grow: 0
+  flex-shrink: 0
+  vertical-align: top
+
+.index
+  width: $index-width
+
+.address
+  width: $address-width
+
+.space
+  width: $space-width
+
+.price
+  width: $price-width
+
+.type
+  width: $type-width
+
+.date
+  width: $date-width
+
+.action
+  width: $action-width
+
+// leaf level containers (cells): special properties
+.index
+  text-align: right
+
+// these are growable text containers, with ellipsis to show truncated text
+.address
+  flex-grow: 1
+  overflow: hidden
+  white-space: nowrap
+  text-overflow: ellipsis
+  padding-right: $padding
+
+.address
+  padding-left: $padding
+
+.price, .type, .date, .action, .space
+  text-align: left
+
+.address_space, .attributes
+  flex-grow: 1
+
+.header.row
+  font-weight: bold
+  color: #333
+
+$address-space-width: max($address-width,$space-width)
+$price-type-width: max($price-width,$type-width)
+$date-action-width: max($date-width,$action-width)
+$attributes-width: max($address-space-width, $price-type-width, $date-action-width)
+
+=horizontal
+  flex-direction: row
+=vertical
+  flex-direction: column
+  flex-grow: 0
+  div
+    flex-grow: 0
+=vertical-growing
+  +vertical
+  flex-grow: 1
+  > div
+    width: 100%
+
+@media all and (max-width: ($margin-width * 2 + $gutter * 6 + $index-width + $address-width + $space-width + $price-width + $type-width + $date-width + $action-width))
+  .price, .type, .date, .action
+    text-align: right
+    padding-right: $padding
+
+  .space
+    flex-grow: 0
+    width: $space-width
+  .price_type, .date_action
+    flex-direction: column
+    flex-grow: 0
+    >div
+      width: 100%
+  
+  .body .price
+    color: #444
+    font-weight: bold
+
+  .price_type
+    width: $price-type-width
+  .date_action
+    width: $date-action-width 
+
+@media all and (max-width: ($margin-width * 2 + $gutter * 6 + $index-width + $address-width + $space-width + $price-type-width + $date-action-width))
+  .space, .price, .type, .date, .action
+    text-align: left
+    padding-left: $padding
+  .body .address
+    color: #444
+    font-weight: bold
+  .header
+    background: #e4ebf1
+  .address_space
+    flex-direction: column
+    > div
+      width: 100%
+  .attributes
+    flex-direction: column
+    flex-grow: 1
+    > div
+      width: 100%
+    
+
+
+

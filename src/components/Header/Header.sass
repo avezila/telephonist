@@ -2,15 +2,13 @@
 .root
   display: flex
   width: 100%
-  height: $header-height*1px
   line-height: $header-height*1px
   +shadow-2dp
   background: #5682A3
   color: white
   font-size: 20px
   font-weight: 500
-
-
+  display: flex
 
 .item
   text-align : center
@@ -24,7 +22,7 @@
 .logo
   @extend .item
   font-size : 0.9em
-  padding: 0 30px
+  padding-right : 30px
 
 .link
   @extend .item
@@ -32,4 +30,10 @@
     background : #5e8bad
   &.active
     background : #3e6b8d
-    
+
+@media all and (max-width: 600px)
+  .root
+    flex-direction: column
+  .item
+    text-align : left
+  
