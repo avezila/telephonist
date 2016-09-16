@@ -1,8 +1,7 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import {computed, autorun, action} from 'mobx'
-import {observer} from 'mobx-react'
+import {observer, inject} from 'mobx-react'
 
-import history from 'side/History'
 import {BaseLayout, Login} from 'components'
 import {Tasks, AllTasks, Offers, OffersFilter} from 'components/Telephonist'
 import {Error404} from 'components/Errors'
@@ -12,16 +11,21 @@ const Components = {
 }
 
 
+@inject('history')
 @observer
 class Router extends Component {
+  static propTypes = {
+    history: PropTypes.object.isRequired,
+  }
+
   constructor (props) {
     super(props)
     autorun(this.redirector)
   }
 
   @action redirector = () => {
-    if (history.route === '/') {
-      history.history.push('/tasks')
+    if (this.props.history.path === '/') {
+      this.props.history.path = '/tasks'
     }
   }
 
@@ -67,7 +71,7 @@ class Router extends Component {
   }
 
   @computed get layout () {
-    switch (history.route) {
+    switch (this.props.history.path) {
       case '/' :
         return 'tasks'
       case '/login' :
@@ -79,7 +83,7 @@ class Router extends Component {
       case '/offers' :
         return 'offers'
     }
-    if (history.route.match(/^\/task\/\w+/)) {
+    if (this.props.history.path.match(/^\/task\/\w+/)) {
       return 'task'
     }
 
@@ -87,19 +91,16 @@ class Router extends Component {
   }
 
   renderLevel (layouts, level, _children = []) {
-    console.log('in', ...arguments)
     let out = []
 
     let index = 0
     for (let key in level) {
       let o = level[key]
       let children = this.renderLevel(layouts, o, _children)
-      console.log(key)
       let m1 = key.match(/^([A-Z].+)/)
       let m2 = key.match(/^_(.+)/)
       if (m1) {
         index++
-        console.log('m1', key, children)
         out.push(React.createElement(Components[key], {
           key      : key + index,
           children : children,
@@ -112,7 +113,6 @@ class Router extends Component {
         out.push(this.renderLevel(layouts, layouts[m2], children))
       }
     }
-    console.log(out)
 
     if (out.length === 1) return out[0]
     return out

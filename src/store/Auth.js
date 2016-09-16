@@ -1,4 +1,4 @@
-import {observable, map, autorun, action, runInAction} from 'mobx'
+import {observable, map, autorun, action} from 'mobx'
 
 import FetchUser from 'side/Fetch/User'
 
@@ -14,6 +14,8 @@ export const STATUS_ERROR   = 2
 
 export default
 class Auth {
+  static singletonInstance
+
   @observable firstName = ''
   @observable lastName  = ''
   @observable access    = map()
@@ -22,20 +24,39 @@ class Auth {
   @observable tryed     = 0
 
   constructor () {
+    if (Auth.singletonInstance) return Auth.singletonInstance
+    Auth.singletonInstance = this
+
     autorun(this.LoadUser)
   }
 
-  @action LoadUser = async () => {
+  LoadUser = async () => {
     if ([STATUS_ERROR, STATUS_INITIAL].indexOf(this.status) < 0) return
     if (this.tryed > 2) return
 
-    let user = await FetchUser()
-    runInAction(() => {
-      console.log('fetch user', user)
-    })
+    try {
+      let user = await FetchUser()
+      this.FetchedUser(user)
+    } catch (e) {
+      this.FetchedUser({error: e})
+    }
+  }
+
+  @action FetchedUser ({access, firstname, lastname, error}) {
+    if (error) {
+      console.error(error)
+      this.tryed++
+      this.status = STATUS_ERROR
+      return
+    }
+    console.log('ok')
+    this.tryed = 0
+    this.status = STATUS_LOADED
+
+    this.firstName = firstname
+    this.lastName  = lastname
+
+    this.access.clear()
+    access.forEach(role => this.access.set(role, true))
   }
 }
-
-// singleton
-const auth = new Auth()
-export default auth

@@ -98,6 +98,7 @@
     "koa-connect-history-api-fallback": "^0.3.1",
     "koa-cors": "0.0.16",
     "koa-proxy": "^0.6.0",
+    "koa-serve": "^0.1.7",
     "koa-static": "^3.0.0",
     "minimatch": "^3.0.3",
     "mobx": "^2.5.1",

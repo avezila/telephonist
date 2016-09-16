@@ -4,9 +4,7 @@ export default
 class LoginContainer extends Component {
   render () {
     return (
-      <div>
-        Login form
-      </div>
+      <div />
     )
   }
 }

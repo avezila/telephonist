@@ -1,10 +1,8 @@
 import React, {Component, PropTypes} from 'react'
-import {computed} from 'mobx'
-import {observer} from 'mobx-react'
+import {action} from 'mobx'
+import {observer, inject} from 'mobx-react'
 import minimatch from 'minimatch'
 import classNames from 'classnames'
-
-import history from 'side/History'
 
 
 function isLeftClickEvent (event) {
@@ -16,6 +14,7 @@ function isModifiedEvent (event) {
 }
 
 export default
+@inject('history')
 @observer
 class Link extends Component {
   static propTypes = {
@@ -27,11 +26,16 @@ class Link extends Component {
     className       : PropTypes.string,
     activeClassName : PropTypes.string,
     path            : PropTypes.string.isRequired,
-    state           : PropTypes.object,
+    args            : PropTypes.object,
     onClick         : PropTypes.func,
+    history         : PropTypes.object.isRequired,
   }
 
-  handleClick = (event) => {
+  static defaultProps = {
+    args: {},
+  }
+
+  @action handleClick = (event) => {
     if (this.props.onClick) this.props.onClick(event)
 
     if (event.defaultPrevented) return
@@ -40,34 +44,37 @@ class Link extends Component {
 
     event.preventDefault()
 
-    history.history.push(this.href, this.props.state)
+    this.props.history.path = this.props.path
+
+    this.props.history.props.keys().forEach(key => {
+      if (!this.props.args[key]) this.props.history.props.delete(key)
+    })
+    this.props.history.props.merge(this.props.args)
   }
 
-  @computed get isActive () {
+  get isActive () {
     const {isActive} = this.props
 
     if (typeof isActive === 'function') {
-      return isActive(history)
+      return isActive(this.props.history)
     } else if (isActive instanceof RegExp) {
-      return isActive.test(history.route)
+      return isActive.test(this.props.history.path)
     } else if (typeof isActive === 'string') {
-      return minimatch(history.route, isActive)
-    } else if (typeof this.props.path === 'string') {
-      return minimatch(history.route, this.props.path)
+      return minimatch(this.props.history.path, isActive)
+    } else {
+      return minimatch(this.props.history.path, this.props.path)
     }
-
-    return false
   }
 
-  @computed get className () {
+  get className () {
     return classNames(
       this.props.className,
-      this.isActive ? this.props.activeClassName || 'active' : ''
+      this.isActive && this.props.activeClassName
     )
   }
 
-  @computed get href () {
-    return `${history.base.replace(/\/$/, '')}/${this.props.path.replace(/^\//, '')}`
+  get href () {
+    return this.props.history.toHref(this.props.path, this.props.args)
   }
 
   render () {
@@ -76,8 +83,9 @@ class Link extends Component {
     delete props.className
     delete props.activeClassName
     delete props.path
-    delete props.state
+    delete props.args
     delete props.onClick
+    delete props.history
 
     return (
       <a

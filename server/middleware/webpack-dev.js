@@ -8,7 +8,7 @@ const debug = _debug('app:server:webpack-dev')
 
 export default function (compiler, publicPath) {
   debug('Enable webpack dev middleware.')
-
+  console.log(publicPath)
   const middleware = WebpackDevMiddleware(compiler, {
     publicPath,
     contentBase : paths.client(),

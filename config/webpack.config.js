@@ -138,7 +138,7 @@ webpackConfig.module.preLoaders = [{
 webpackConfig.eslint = {
   configFile  : paths.base('.eslintrc'),
   emitWarning : __DEV__,
-  fix         : true,
+  fix         : false,
   cache       : true,
 }
 

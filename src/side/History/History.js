@@ -1,67 +1,81 @@
-import {computed, observable, map, action} from 'mobx'
+import {computed, observable, map, action, reaction} from 'mobx'
 
 import createHistory from 'history/createBrowserHistory'
 
 
+export default
 class History {
-  @observable location
-  @observable base = ''
-  @observable params = map()
+  static singletonInstance
+
+  @observable props = map()
+  @observable base = '/9r/telephonist' // format: '/telephonist'
+  @observable path = '/'
 
   history
   unlisten
 
   constructor () {
+    if (History.singletonInstance) return History.singletonInstance
+    History.singletonInstance = this
+
     this.history = createHistory()
+    window.h = this
+    this.syncFromUrl()
 
-    this.SetLocation(this.history.location)
+    this.unlisten = this.history.listen(this.syncFromUrl)
 
-    this.unlisten = this.history.listen(this.onHistoryChange)
+    reaction(
+      () => this.url,
+      this.syncToBrowserUrl
+    )
   }
 
-  onHistoryChange = (location, action) => {
-    this.SetLocation(location)
+  syncToBrowserUrl = (url) => {
+    let {path, props} = this.fromUrl()
+    let now = this.toHref(path, props)
+    if (url === now) return
+    this.history.push(url)
   }
 
-  @action SetLocation (location) {
-    if (this.location === undefined) {
-      let o = {}
-      for (let key in location) {
-        if (typeof location[key] === 'string') o[key] = location[key]
-      }
-      this.location = o
-    } else {
-      for (let key in location) {
-        if (typeof location[key] === 'string') {
-          this.location[key] = location[key]
-        }
-      }
-    }
-    let p = {}
-    location.search.replace(/^\?/, '').split('&').map(kv => {
-      let [k, v] = kv.split('=')
-      p[k] = v === undefined ? true : v
-      this.params.set(k, v)
+  toHref (path = this.path, props = this.props.toJS(), base = this.base) {
+    let pathname = '/' + [base, path].map(s => s.replace(/\/$/, '').replace(/^\//, ''))
+      .filter(s => s)
+      .join('/')
+
+    let search = Object.keys(props)
+      .sort()
+      .filter(key => key && props[key])
+      .map(key => props[key] === true ? key : `${key}=${encodeURIComponent(props[key])}`)
+      .join('&')
+
+    return [pathname, search].filter(v => v).join('?')
+  }
+
+  @computed get url () {
+    return this.toHref()
+  }
+
+  @action syncFromUrl = (location) => {
+    location = location || this.history.location
+    let {props, path} = this.fromUrl(location)
+    this.path = path
+
+    this.props.keys().forEach(key => {
+      if (!props[key]) this.props.delete(key)
     })
+    this.props.merge(props)
+  }
 
-    this.params.keys().map(key => {
-      if (!p[key]) this.params.delete(key)
+  fromUrl (location = this.history.location) {
+    let path = location.pathname.replace(new RegExp(`^${this.base}/`), '/')
+    let props = {}
+    location.search.replace(/^\?/, '')
+    .split('&')
+    .map(kv => kv.split('='))
+    .filter(([k, v]) => k)
+    .map(([k, v]) => {
+      props[k] = v === undefined ? true : decodeURIComponent(v)
     })
-  }
-  @computed get baseReplace () {
-    return new RegExp(`^${this.base}`)
-  }
-  @computed get route () {
-    return this.location.pathname.replace(this.baseReplace, '')
-  }
-  @computed get document () {
-    return this.route.match(/[^/]*$/)[0]
+    return {path, props}
   }
 }
-
-// Singleton
-const history = new History()
-
-window.h = history
-
-export default history

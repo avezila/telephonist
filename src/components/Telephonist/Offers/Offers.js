@@ -29,7 +29,7 @@ class Offers extends Component {
   }
   render () {
     let rows = []
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 10; i++) {
       rows.push(this.row(i))
     }
 
@@ -40,7 +40,7 @@ class Offers extends Component {
             <div className={classNames(s.column, s.index)}>#</div>
             <div className={classNames(s.wrapper, s.attributes)}>
               <div className={classNames(s.wrapper, s.address_space)}>
-                <div className={classNames(s.column, s.address)}>Адресс</div>
+                <div className={classNames(s.column, s.address)}>Адрес</div>
                 <div className={classNames(s.column, s.space)}>Общая площадь</div>
               </div>
               <div className={classNames(s.wrapper, s.price_type)}>

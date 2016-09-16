@@ -19,7 +19,7 @@ const config = {
   // ----------------------------------
   path_base  : path.resolve(__dirname, '..'),
   dir_client : 'src',
-  dir_dist   : 'dist',
+  dir_dist   : 'dist/9r/telephonist',
   dir_server : 'server',
   dir_test   : 'tests',
 
@@ -37,14 +37,14 @@ const config = {
   compiler_hash_type       : 'hash',
   compiler_fail_on_warning : false,
   compiler_quiet           : false,
-  compiler_public_path     : '/',
+  compiler_public_path     : '/9r/telephonist/',
   compiler_stats           : {
     chunks : false,
     chunkModules : false,
     colors : true
   },
   compiler_vendor : [
-    //'babel-polyfill',
+    'babel-polyfill',
     //'jquery',
     'bluebird',
     'react',
@@ -114,5 +114,6 @@ if (overrides) {
 } else {
   debug('No environment overrides found, defaults will be used.')
 }
+
 
 export default config
