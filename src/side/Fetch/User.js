@@ -9,5 +9,6 @@ export default async function FetchUser () {
     access    : ['TELEPHONIST_BASIC_ACCESS', 'TELEPHONIST_FULL_ACCESS'],
     firstname : 'Rob',
     lastname  : 'Pike',
+    loggedIn  : true,
   }
 }

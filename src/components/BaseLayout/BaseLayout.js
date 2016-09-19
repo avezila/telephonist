@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react'
+
 import 'todc-bootstrap/dist/css/bootstrap.css'
-import 'todc-bootstrap/dist/css/bootstrap-theme.css'
+// import 'todc-bootstrap/dist/css/bootstrap-theme.css'
 import 'todc-bootstrap/dist/css/todc-bootstrap.css'
 import 'react-bootstrap-multiselect/css/bootstrap-multiselect.css'
 

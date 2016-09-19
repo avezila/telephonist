@@ -1,4 +1,4 @@
-import {computed, observable, map, action, reaction} from 'mobx'
+import {computed, observable, map, action, autorun} from 'mobx'
 
 import createHistory from 'history/createBrowserHistory'
 
@@ -24,17 +24,14 @@ class History {
 
     this.unlisten = this.history.listen(this.syncFromUrl)
 
-    reaction(
-      () => this.url,
-      this.syncToBrowserUrl
-    )
+    autorun(this.syncToBrowserUrl)
   }
 
-  syncToBrowserUrl = (url) => {
+  syncToBrowserUrl = () => {
     let {path, props} = this.fromUrl()
     let now = this.toHref(path, props)
-    if (url === now) return
-    this.history.push(url)
+    if (this.url === now) return
+    this.history.push(this.url)
   }
 
   toHref (path = this.path, props = this.props.toJS(), base = this.base) {
@@ -67,7 +64,10 @@ class History {
   }
 
   fromUrl (location = this.history.location) {
-    let path = location.pathname.replace(new RegExp(`^${this.base}/`), '/')
+    let path = '/' + this.base.split('/').reduce((p, b) => {
+      return p.replace(new RegExp(`^/?${b}/?`), '')
+    }, location.pathname).replace(/^\/+/, '').replace(/\/+$/, '')
+
     let props = {}
     location.search.replace(/^\?/, '')
     .split('&')

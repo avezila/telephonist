@@ -21,7 +21,7 @@ const webpackConfig = {
       paths.client(),
       'node_modules'
     ],
-    extensions: ['', '.ts', '.tsx', '.js', '.jsx', '.json', '.css', '.scss', '.sass'],
+    extensions: ['', '.js', '.jsx', '.json', '.css', '.scss', '.sass'],
   },
   module: {
     loaders: [],
@@ -82,8 +82,9 @@ if (__DEV__) {
     new webpack.optimize.OccurrenceOrderPlugin(),
      new webpack.optimize.DedupePlugin(),
     new webpack.optimize.UglifyJsPlugin({
+      // compress: false,
       compress: {
-        unused        : false,
+        unused        : true,
         dead_code     : true,
         warnings      : false,
         properties    : true,
@@ -112,9 +113,9 @@ if (__DEV__) {
 // Don't split bundles during testing, since we only want import one bundle
 if (!__TEST__) {
   webpackConfig.plugins.push(
-    new webpack.optimize.CommonsChunkPlugin({
-      names: ['vendor']
-    })
+     new webpack.optimize.CommonsChunkPlugin({
+       names: ['vendor']
+     })
   )
 }
 // ------------------------------------
@@ -184,23 +185,6 @@ webpackConfig.module.loaders.push({
 webpackConfig.module.loaders.push({
   test   : /\.proto$/,
   loader : 'proto-loader'
-})
-
-webpackConfig.module.loaders.push({
-  test       : /\.tsx?$/,
-  preLoaders : [
-    {
-      test   : /\.tsx?$/,
-      loader : 'tslint'
-    }
-  ],
-  loaders: [
-    'awesome-typescript-loader',
-  ],
-  tslint: {
-    emitErrors : true,
-    failOnHint : true
-  }
 })
 
 // ------------------------------------

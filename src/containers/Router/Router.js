@@ -5,17 +5,20 @@ import {observer, inject} from 'mobx-react'
 import {BaseLayout, Login} from 'components'
 import {Tasks, AllTasks, Offers, OffersFilter} from 'components/Telephonist'
 import {Error404} from 'components/Errors'
+import {STATUS_PRELOADED} from 'store/Auth'
+
 
 const Components = {
   BaseLayout, Login, Tasks, AllTasks, Offers, OffersFilter, Error404
 }
 
 
-@inject('history')
+@inject('history', 'auth')
 @observer
 class Router extends Component {
   static propTypes = {
-    history: PropTypes.object.isRequired,
+    history : PropTypes.object.isRequired,
+    auth    : PropTypes.object.isRequired,
   }
 
   constructor (props) {
@@ -71,7 +74,11 @@ class Router extends Component {
   }
 
   @computed get layout () {
-    switch (this.props.history.path) {
+    let {auth, history} = this.props
+
+    if (auth.status < STATUS_PRELOADED) return 'base'
+
+    switch (history.path) {
       case '/' :
         return 'tasks'
       case '/login' :
@@ -83,7 +90,7 @@ class Router extends Component {
       case '/offers' :
         return 'offers'
     }
-    if (this.props.history.path.match(/^\/task\/\w+/)) {
+    if (history.path.match(/^\/task\/\w+/)) {
       return 'task'
     }
 
@@ -121,6 +128,7 @@ class Router extends Component {
   render () {
     let layouts = this.layouts
     let layout  = layouts[this.layout]
+    console.log(layout)
 
     return this.renderLevel(layouts, layout)
   }
